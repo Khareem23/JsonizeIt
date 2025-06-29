@@ -1,0 +1,65 @@
+## Build Folders : Ignore from all directory levels
+bin/
+obj/
+out/
+
+## Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.VC.db
+*.VC.VC.opendb
+*DS_Storex
+
+## Rider
+.idea/
+*.DotSettings.user
+
+## VS Code
+.vscode/
+.vscode/*.code-workspace
+.vscode/launch.json
+.vscode/tasks.json
+
+## ASP.NET Core
+## appsettings.Development.json
+appsettings.*.json
+secrets.json
+*.db
+*.db-shm
+*.db-wal
+*.dbmdl
+
+## Logs
+*.log
+*.tlog
+
+## NuGet
+*.nupkg
+*.snupkg
+.nuget/
+
+## Environment
+.env
+.env.*
+
+## Test and Coverage
+TestResults/
+coverage/
+
+## LibMan
+wwwroot/lib/
+
+## Node (if using frontend tools)
+node_modules/
+npm-debug.log
+yarn-error.log
+pnpm-lock.yaml
+
+## Other
+_ReSharper*/
+*.cache/
+*.pid
+*.pid.lock

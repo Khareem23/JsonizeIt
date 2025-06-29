@@ -5,6 +5,14 @@
 
 JsonizeIt is a developer tool that converts your data models — written in C#, TypeScript, Java, Dart, Python, or structured formats like XML or CSV — into clean, ready-to-use JSON. Whether you're working on frontend, backend, or full-stack projects, JsonizeIt boosts productivity by eliminating the repetitive task of manually crafting JSON payloads
 
+---
+## 🤔 Technologies Used?
+
+1. C#.Net 
+2. Blazor Web Assembly
+3. X-Unit
+4. Bogus
+5. Automapper (Optional)
 
 
 ---

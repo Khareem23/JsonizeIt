@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonizeIt.Tests", "JsonizeIt.Tests\JsonizeIt.Tests.csproj", "{42F8A9EB-0EC4-4EF2-814C-D26C1BBE20F9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonizeIt.Lib", "JsonizeIt.Lib\JsonizeIt.Lib.csproj", "{96D643F4-277B-491C-A165-5FED3571E362}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonizeIt.Frontend", "JsonizeIt.Frontend\JsonizeIt.Frontend.csproj", "{0124D255-8034-46C4-8C68-41242E08BA90}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{42F8A9EB-0EC4-4EF2-814C-D26C1BBE20F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42F8A9EB-0EC4-4EF2-814C-D26C1BBE20F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42F8A9EB-0EC4-4EF2-814C-D26C1BBE20F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42F8A9EB-0EC4-4EF2-814C-D26C1BBE20F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{96D643F4-277B-491C-A165-5FED3571E362}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96D643F4-277B-491C-A165-5FED3571E362}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96D643F4-277B-491C-A165-5FED3571E362}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96D643F4-277B-491C-A165-5FED3571E362}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0124D255-8034-46C4-8C68-41242E08BA90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0124D255-8034-46C4-8C68-41242E08BA90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0124D255-8034-46C4-8C68-41242E08BA90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0124D255-8034-46C4-8C68-41242E08BA90}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
