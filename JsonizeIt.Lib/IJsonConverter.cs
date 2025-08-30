@@ -2,5 +2,5 @@
 
 public interface IJsonConverter
 {
-    public string ConvertToJson(string dataToConvert, DataType type ,bool isCamelCase = false, bool isMinify = false );
+    public string Parse(string dataToConvert ,bool isCamelCase = false, bool isMinify = false );
 }
