@@ -4,6 +4,9 @@
 name: JsonizeIT API Pipeline 
 
 on:
+  push:
+    branches:
+      - develop
   pull_request:
     branches:
       - develop
@@ -33,7 +36,7 @@ jobs:
   # build docker image and push to docker hub
   build_ci_job:
     name: Building API docker image
-    if: github.event.action == 'closed' && github.event.pull_request.merged == true
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     outputs:
       docker_tag: ${{ steps.generate_tag.outputs.tag }}
@@ -70,7 +73,7 @@ jobs:
   
   deploy_cd_job:
     name: Deploy Image From Registry to VPS
-    if: github.event.action == 'closed' && github.event.pull_request.merged == true
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     needs: [build_ci_job]
     steps:
