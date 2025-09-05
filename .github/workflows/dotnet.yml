@@ -33,6 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       docker_tag: ${{ steps.generate_tag.outputs.tag }}
+    needs: [build]
     steps:
       - name: Checkout the repo code for Workflow Access
         uses: actions/checkout@v2
