@@ -8,7 +8,8 @@ on:
 
 jobs:
   auto-approve-and-merge:
-    if: github.actor == github.event.pull_request.user.login
+    if: false
+    #if: github.actor == github.event.pull_request.user.login
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
