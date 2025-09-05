@@ -7,10 +7,13 @@ on:
   push:
     branches: [ "develop" ]
   pull_request:
-    branches: [ "develop" ]
+    branches:
+      - develop
+    types: [opened, synchronize, closed]
 
 jobs:
   build:
+    if: github.event.action == 'opened' || github.event.action == 'synchronize'
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -25,11 +28,10 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal
 
-  
   # build docker image and push to docker hub
   build_ci_job:
     name: Building API docker image
-    if: github.event.action == 'closed' && github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     outputs:
       docker_tag: ${{ steps.generate_tag.outputs.tag }}
