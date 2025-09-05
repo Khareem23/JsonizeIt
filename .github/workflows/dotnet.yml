@@ -1,0 +1,109 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: .NET
+
+on:
+  push:
+    branches: [ "develop" ]
+  pull_request:
+    branches: [ "develop" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
+
+  
+  # build docker image and push to docker hub
+  build_ci_job:
+    name: Building API docker image
+    if: github.event.action == 'closed' && github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    outputs:
+      docker_tag: ${{ steps.generate_tag.outputs.tag }}
+    steps:
+      - name: Checkout the repo code for Workflow Access
+        uses: actions/checkout@v2
+  
+      - name: Generate timestamp for Docker tag
+        id: generate_tag
+        run: echo "tag=$(echo feature-$(date +%Y%m%d%H%M%S))" >> $GITHUB_OUTPUT
+  
+      - name: Display tag
+        run: echo "Tag is ${{ steps.generate_tag.outputs.tag }}"
+  
+      - name: Build the Docker image
+        uses: docker/setup-buildx-action@v1
+  
+      - name: Docker Hub Login
+        uses: docker/login-action@v1
+        with: 
+          username: '${{ secrets.DOCKERHUB_USERNAME }}'
+          password: '${{ secrets.DOCKERHUB_TOKEN }}'
+  
+      - name: Build Image and push to Registry
+        uses: docker/build-push-action@v2
+        with: 
+          context: .
+          file: ./JsonizeIT.API/Dockerfile
+          push: true
+          tags: |
+            kareem234/jsonizeit:${{ steps.generate_tag.outputs.tag }}
+            kareem234/jsonizeit:latest
+  
+  deploy_cd_job:
+    name: Deploy Image From Registry to VPS
+    if: github.event.action == 'closed' && github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    needs: [build_ci_job]
+    steps:
+      - env:
+          DOCKER_TAG: ${{needs.build_ci_job.outputs.docker_tag}}
+        run: echo "Env Tag is $DOCKER_TAG"
+      - name: Output tag
+        run: echo "Tag is ${{needs.build_ci_job.outputs.docker_tag}}"
+      - name: Pulling new image and deploy to VPS
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            echo "Running command: docker image pull kareem234/jsonizeit:${{needs.build_ci_job.outputs.docker_tag}}"
+            echo "Listing all tags for the image"
+            
+            docker image pull kareem234/jsonizeit:${{needs.build_ci_job.outputs.docker_tag}}
+
+            echo "Running command: docker container stop JsonizeIT-API if it exists"
+            if [ "$(docker ps -aq -f name=JsonizeIT-API)" ]; then
+              docker container stop JsonizeIT-API
+            fi
+
+            echo "Running command: docker container prune -f"
+            docker container prune -f
+
+            echo "Running command: docker run -d --name JsonizeIT-API --network decloud23_network --restart unless-stopped -p 8201:8201 kareem234/jsonizeit:${{needs.build_ci_job.outputs.docker_tag}}"
+            docker run -d --name JsonizeIT-API --network decloud23_network --restart unless-stopped -p 8201:8201 kareem234/jsonizeit:${{needs.build_ci_job.outputs.docker_tag}}
+
+            docker image prune -f 
+
+            # Ensure firewalld is running
+            sudo systemctl start firewalld || true
+
+            sudo firewall-cmd --add-port=8201/tcp --permanent
+
+            sudo firewall-cmd --reload
+
