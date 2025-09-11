@@ -12,11 +12,18 @@ builder.Services.AddScoped<IJsonConverter, CSharpParser2>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+// if (app.Environment.IsDevelopment())
+// {
+//     
+//     app.UseSwaggerUI();
+// }
+
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "JsonizeIT API V1");
+    c.RoutePrefix = ""; // Serve at root
+});
 
 // app.UseHttpsRedirection();
 
