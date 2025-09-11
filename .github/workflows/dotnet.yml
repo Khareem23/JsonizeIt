@@ -104,7 +104,7 @@ jobs:
             docker container prune -f
 
             echo "Running command: docker run -d --name JsonizeIT-API --network decloud23_network --restart unless-stopped -p 8201:8201 kareem234/jsonizeit:${{needs.build_ci_job.outputs.docker_tag}}"
-            docker run -d --name JsonizeIT-API --network decloud23_network --network-alias jsonizeit-api --restart unless-stopped -p 8201:8201 kareem234/jsonizeit:${{needs.build_ci_job.outputs.docker_tag}}
+            docker run -d --name JsonizeIT-API --network decloud23_network --network-alias jsonizeit-api --restart unless-stopped -e ASPNETCORE_ENVIRONMENT=Production -p 8201:8201 kareem234/jsonizeit:${{needs.build_ci_job.outputs.docker_tag}}
 
             docker image prune -f 
 
