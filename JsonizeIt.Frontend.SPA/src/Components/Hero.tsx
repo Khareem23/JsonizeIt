@@ -1,10 +1,13 @@
 import { useState, useCallback, useRef } from "react";
-// import { jsonConverter } from "../jsonConverter";
 import copy from "../assets/images/copy-icon.svg";
 import download from "../assets/images/download-icon.svg";
 import feature from "../assets/images/Featured icon.svg";
 import onedriveIcon from "../assets/images/onedrive.svg"
 import fileIcon from "../assets/images/fileicon.svg"
+
+const toBase64 = (str: string): string => {
+  return btoa(unescape(encodeURIComponent(str)));
+};
 
 const programTypes = [
  "C#",
@@ -19,13 +22,14 @@ const programTypes = [
 const Hero = () => {
   const [inputMode, setInputMode] = useState<"text" | "file">("text");
   const [textInput, setTextInput] = useState("");
-  const [jsonOutput] = useState("");
+  const [jsonOutput, setJsonOutput] = useState("");
   const [fileName, setFileName] = useState("");
   const [isDragActive, setIsDragActive] = useState(false);
    const [language, setLanguage] = useState(programTypes[0]);
   const [pascalCase, setPascalCase] = useState(false);
   const [nullable, setNullable] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const processFile = useCallback((file: File) => {
@@ -41,7 +45,7 @@ const Hero = () => {
     const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
     
     if (!allowedExtensions.includes(fileExtension)) {
-      alert('Please select a valid file type');
+      console.log('Please select a valid file type');
       return;
     }
 
@@ -54,11 +58,9 @@ const Hero = () => {
 
     try {
       setLoading(true);
-      // const data = await convertCode(fileContent); 
-      // setJsonOutput(JSON.stringify(data, null, 2));
     } catch (err) {
       console.error(err);
-      alert("Conversion failed.");
+      console.log("Conversion failed.");
     } finally {
       setLoading(false);
     }
@@ -106,12 +108,53 @@ const Hero = () => {
   };
 
 const handleConvert = async () => {
-  console.log("converted")
+  try {
+    setLoading(true);
+    if (!textInput.trim()) {
+      console.log("Please provide input text or upload a file.");
+      return;
+    }
+
+   const payload = {
+      dataToConvertInBase64: toBase64(textInput),
+      isCamelCase: pascalCase,  
+      isMinify: !nullable        
+    };
+    const response = await fetch("https://api.jsonizeit.com/parse", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to convert, please try again.");
+    }
+
+    const result = await response.json();
+    let parsedJson;
+try {
+  parsedJson = JSON.parse(result.data);
+} catch {
+  parsedJson = result; // fallback if it’s already JSON
+}
+    setJsonOutput(JSON.stringify(parsedJson, null, 2));
+
+  } catch (err) {
+    console.error("Conversion failed:", err);
+    setJsonOutput("{\n  \"error\": \"Conversion failed. Please try again.\"\n}");
+  } finally {
+    setLoading(false);
+  }
 };
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(jsonOutput);
-  };
+  navigator.clipboard.writeText(jsonOutput).then(() => {
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000); 
+  });
+};
 
   const handleDownload = () => {
     const blob = new Blob([jsonOutput], { type: "application/json" });
@@ -269,7 +312,7 @@ const handleConvert = async () => {
               <h4 className="font-bold text-white">JSON</h4>
               <div className="flex items-center gap-4 text-white">
                 <div className="flex items-center gap-2.5 px-2 py-1 cursor-pointer" onClick={handleCopy}>
-                  <p className="text-[12px]">Copy</p>
+                  <p className="text-[12px]">{copied ? "Copied" : "Copy"}</p>
                   <img src={copy} alt="copy icon" />
                 </div>
                 <div className="flex items-center gap-2.5 bg-[#00A86E] px-2 py-1 cursor-pointer" onClick={handleDownload}>
