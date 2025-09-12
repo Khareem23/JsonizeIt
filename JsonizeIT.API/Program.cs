@@ -9,14 +9,21 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IJsonConverter, CSharpParser2>();
 
+// CORS 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy", builder =>
+    {
+        builder
+            .AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-// if (app.Environment.IsDevelopment())
-// {
-//     
-//     app.UseSwaggerUI();
-// }
+app.UseCors("CorsPolicy");
 
 app.UseSwagger();
 app.UseSwaggerUI(c =>
