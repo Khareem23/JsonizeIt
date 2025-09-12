@@ -293,7 +293,7 @@ try {
 
             <button
               onClick={handleConvert}
-              className="bg-[#0037DD] px-4 py-2.5 text-white text-sm font-semibold w-[30%] mx-auto rounded-[8px] mt-2 cursor-pointer" disabled={loading}
+              className="bg-[#0037DD] px-4 py-2.5 text-white text-sm font-semibold w-[40%] md:w-[30%] mx-auto rounded-[8px] mt-2 cursor-pointer" disabled={loading}
             >
                {loading ? "Converting..." : "Convert"}
             </button>
