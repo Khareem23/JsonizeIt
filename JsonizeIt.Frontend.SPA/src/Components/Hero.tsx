@@ -5,8 +5,18 @@ import feature from "../assets/images/Featured icon.svg";
 import onedriveIcon from "../assets/images/onedrive.svg"
 import fileIcon from "../assets/images/fileicon.svg"
 
+const toBase64 = (str: string): string => {
+  return btoa(unescape(encodeURIComponent(str)));
+};
+
 const programTypes = [
-  "C#", "JavaScript", "Python", "Java", "C++", "Go", "Rust", "TypeScript", "Ruby", "PHP"
+ "C#",
+  "TypeScript",
+  "Java",
+  "Dart",
+  "Python",
+  "XML",
+  "CSV"
 ];
 
 const Hero = () => {
@@ -15,33 +25,48 @@ const Hero = () => {
   const [jsonOutput, setJsonOutput] = useState("");
   const [fileName, setFileName] = useState("");
   const [isDragActive, setIsDragActive] = useState(false);
+   const [language, setLanguage] = useState(programTypes[0]);
+  const [pascalCase, setPascalCase] = useState(false);
+  const [nullable, setNullable] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const processFile = useCallback((file: File) => {
     if (!file) return;
 
-    const allowedExtensions = ['.json', '.txt', '.py', '.java', '.cpp', '.cs', '.go', '.rs', '.rb', '.php', '.js', '.ts'];
+    const allowedExtensions = [ ".cs", 
+      ".ts",   
+      ".java",
+      ".dart",
+      ".py",
+      ".xml",
+      ".csv" ];
     const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
     
     if (!allowedExtensions.includes(fileExtension)) {
-      alert('Please select a valid file type');
+      console.log('Please select a valid file type');
       return;
     }
 
     setFileName(file.name);
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      const fileContent = reader.result as string;
-      try {
-        const parsed = JSON.parse(fileContent);
-        setJsonOutput(JSON.stringify(parsed, null, 2));
-      } catch {
-        setJsonOutput(fileContent);
-      }
-    };
-    reader.readAsText(file);
-  }, []);
+  const reader = new FileReader();
+  reader.onload = async () => {
+    const fileContent = reader.result as string;
+    setTextInput(fileContent); 
+
+    try {
+      setLoading(true);
+    } catch (err) {
+      console.error(err);
+      console.log("Conversion failed.");
+    } finally {
+      setLoading(false);
+    }
+  };
+  reader.readAsText(file);
+}, []);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -82,13 +107,54 @@ const Hero = () => {
     fileInputRef.current?.click();
   };
 
-  const handleConvert = () => {
-console.log("Convert clicked, but conversion disabled.");
-  };
+const handleConvert = async () => {
+  try {
+    setLoading(true);
+    if (!textInput.trim()) {
+      console.log("Please provide input text or upload a file.");
+      return;
+    }
+
+   const payload = {
+      dataToConvertInBase64: toBase64(textInput),
+      isCamelCase: pascalCase,  
+      isMinify: !nullable        
+    };
+    const response = await fetch("https://api.jsonizeit.com/parse", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to convert, please try again.");
+    }
+
+    const result = await response.json();
+    let parsedJson;
+try {
+  parsedJson = JSON.parse(result.data);
+} catch {
+  parsedJson = result; // fallback if it’s already JSON
+}
+    setJsonOutput(JSON.stringify(parsedJson, null, 2));
+
+  } catch (err) {
+    console.error("Conversion failed:", err);
+    setJsonOutput("{\n  \"error\": \"Conversion failed. Please try again.\"\n}");
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(jsonOutput);
-  };
+  navigator.clipboard.writeText(jsonOutput).then(() => {
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000); 
+  });
+};
 
   const handleDownload = () => {
     const blob = new Blob([jsonOutput], { type: "application/json" });
@@ -105,7 +171,8 @@ console.log("Convert clicked, but conversion disabled.");
 
         <div className="flex items-center gap-4 border-[#B9B9B9] border-b-2 border-r-0 border-l-0 px-5 py-4">
           <h4 className="text-[#1E1E1E] font-bold">Input file type</h4>
-          <select name="inputFileType" id="inputFileType" className="rounded-[8px] border border-[#D0D5DD] p-2 cursor-pointer focus:outline-none w-[30%]">
+          <select value={language}
+            onChange={(e) => setLanguage(e.target.value)} className="rounded-[8px] border border-[#D0D5DD] p-2 cursor-pointer focus:outline-none w-[30%]">
             {programTypes.map((type) => (
               <option key={type} value={type}>
                 {type}
@@ -215,20 +282,20 @@ console.log("Convert clicked, but conversion disabled.");
             <h4 className="font-medium text-[#1E1E1E]">Property Settings</h4>
             <div className="flex items-center gap-6">
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" /> 
+                <input type="checkbox" checked={pascalCase} onChange={(e) => setPascalCase(e.target.checked)} /> 
                 <p className="text-sm text-[#344054]">Use pascal case</p>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" /> 
+                <input type="checkbox" checked={nullable} onChange={(e) => setNullable(e.target.checked)}/> 
                 <p className="text-sm text-[#344054]">Use nullable values</p>
               </label>
             </div>
 
             <button
               onClick={handleConvert}
-              className="bg-[#0037DD] px-4 py-2.5 text-white text-sm font-semibold w-[30%] mx-auto rounded-[8px] mt-2 cursor-pointer"
+              className="bg-[#0037DD] px-4 py-2.5 text-white text-sm font-semibold w-[40%] md:w-[30%] mx-auto rounded-[8px] mt-2 cursor-pointer" disabled={loading}
             >
-              Convert
+               {loading ? "Converting..." : "Convert"}
             </button>
           </div>
         </div>
@@ -245,7 +312,7 @@ console.log("Convert clicked, but conversion disabled.");
               <h4 className="font-bold text-white">JSON</h4>
               <div className="flex items-center gap-4 text-white">
                 <div className="flex items-center gap-2.5 px-2 py-1 cursor-pointer" onClick={handleCopy}>
-                  <p className="text-[12px]">Copy</p>
+                  <p className="text-[12px]">{copied ? "Copied" : "Copy"}</p>
                   <img src={copy} alt="copy icon" />
                 </div>
                 <div className="flex items-center gap-2.5 bg-[#00A86E] px-2 py-1 cursor-pointer" onClick={handleDownload}>

@@ -31,7 +31,7 @@ const HowItWorks = () => {
 
   ]
   return (
-    <section className="font-inter w-[90%] md:w-[80%] lg:w-[70%] mx-auto my-0 pb-40 pt-20">
+    <section id="how-it-works" className="font-inter w-[90%] md:w-[80%] lg:w-[70%] mx-auto my-0 pb-40 pt-20">
       <div className="flex flex-col items-center justify-center gap-3 mb-16 text-center">
         <h3 className="font-bold text-[32px]">How It Works</h3>
         <p className="text-[#878787] font-medium">Select file type, upload or paste text, click convert to get your JSON output</p>
