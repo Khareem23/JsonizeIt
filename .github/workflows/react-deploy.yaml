@@ -6,6 +6,16 @@ on:
       - 'JsonizeIt.Frontend.SPA/**'       # only trigger when frontend files change
     branches:
       - develop                # or your deploy branch (e.g. master/dev)
+  pull_request:
+    paths:
+      - 'JsonizeIt.Frontend.SPA/**'       # only trigger when frontend files change
+    branches:
+      - develop
+    types: [opened, synchronize, closed]
+
+
+
+
 jobs:
   build_ci_job:
     name: Building WEB docker image
