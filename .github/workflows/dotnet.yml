@@ -1,13 +1,17 @@
 # This workflow will build a .NET project
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
 
-name: JsonizeIT-API Build and Deploy Pipeline 
+name: JsonizeIT-API Build and Deploy Pipeline
 
 on:
   push:
+    paths:
+      - 'JsonizeIt.API/**'       # only trigger when frontend files change
     branches:
-      - develop
+      - develop                # or your deploy branch (e.g. master/dev)
   pull_request:
+    paths:
+      - 'JsonizeIt.API/**'       # only trigger when frontend files change
     branches:
       - develop
     types: [opened, synchronize, closed]
@@ -64,7 +68,7 @@ jobs:
       - name: Build Image and push to Registry
         uses: docker/build-push-action@v2
         with: 
-          context: .
+          context: ./JsonizeIT.API
           file: ./JsonizeIT.API/Dockerfile
           push: true
           tags: |
