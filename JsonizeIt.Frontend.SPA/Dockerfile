@@ -22,7 +22,7 @@ RUN npm run build
 FROM nginx:latest
 
 # Copy the built application from the previous stage
-COPY --from=0 /app/build /usr/share/nginx/html
+COPY --from=0 /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expose the port the app runs on
