@@ -56,7 +56,7 @@ jobs:
 
             docker container prune -f
 
-            docker run -d --name Jsonize-Web --network decloud23_network --restart unless-stopped -p 5202:80 kareem234/jsonizeit-web:latest
+            docker run -d --name Jsonize-Web --network decloud23_network --restart unless-stopped -p 6202:80 kareem234/jsonizeit-web:latest
 
             docker image prune -f 
             
