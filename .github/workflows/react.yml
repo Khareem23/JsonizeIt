@@ -65,6 +65,6 @@ jobs:
             
             sudo firewall-cmd --add-port=80/tcp --permanent
             sudo firewall-cmd --add-port=443/tcp --permanent
-            sudo firewall-cmd --add-port=5202/tcp --permanent
+            sudo firewall-cmd --add-port=6202/tcp --permanent
 
             sudo firewall-cmd --reload
