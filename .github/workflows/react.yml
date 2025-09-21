@@ -32,8 +32,8 @@ jobs:
       - name: Build Image and push to Registry
         uses: docker/build-push-action@v2
         with: 
-          context: .
-          file: ./Dockerfile
+          context: ./JsonizeIt.Frontend.SPA
+          file: ./JsonizeIt.Frontend.SPA/Dockerfile
           push: true
           tags: 'kareem234/jsonizeit-web:latest'
 
