@@ -165,7 +165,7 @@ try {
   };
 
   return (
-    <section className="flex flex-col md:flex-row bg-white items-stretch justify-start md:justify-between rounded-4xl font-inter gap-0 md:gap-4 border-4 border-[#00145299] w-[90%] md:w-[80%] lg:w-[70%] mx-auto -my-[74px] mb-8">      
+    <section className="flex flex-col md:flex-row bg-white items-stretch justify-start md:justify-between rounded-4xl font-inter gap-0 md:gap-4 border-4 border-[#00145299] w-[90%] md:w-[85%] mx-auto -my-[74px] mb-8">      
       {/* LEFT SIDE */}
       <div className="w-full md:w-1/2 min-h-[620px] flex flex-col flex-1 items-stretch border-[#B9B9B9] md:border-r-2">
 

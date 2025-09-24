@@ -1,0 +1,13 @@
+@import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
+@theme {
+  --font-inter: "Inter", sans-serif;
+}
+
+@source inline("{group-hover:}text-white");
+@source inline("{group-hover:}bg-[#001941]");
+@source inline("{group-hover:}border-white");
+@source inline("{group-hover:}hidden");
+@source inline("{group-hover:}block");
+@source inline("{group-hover:}-translate-y-8");
