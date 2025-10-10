@@ -9,6 +9,55 @@ const toBase64 = (str: string): string => {
   return btoa(unescape(encodeURIComponent(str)));
 };
 
+const languageSnippets = {
+  "C#": `{
+  public string Name { get; set; }
+  public int Age { get; set; }
+
+  public User() {
+    Name = "Ola";
+    Age = 23;
+  }
+}`,
+  "TypeScript": `interface User {
+  name: string;
+  age: number;
+}
+
+const user: User = {
+  name: "Ola",
+  age: 23,
+};`,
+  "Java": `class User {
+  String name;
+  int age;
+
+  User() {
+    name = "Ola";
+    age = 23;
+  }
+}`,
+  "Dart": `class User {
+  String name;
+  int age;
+
+  User() {
+    name = "Ola";
+    age = 23;
+  }
+}`,
+  "Python": `class User:
+  def __init__(self):
+    self.name = "Ola"
+    self.age = 23`,
+  "XML": `<user>
+  <name>Ola</name>
+  <age>23</age>
+</user>`,
+  "CSV": `name,age
+Ola,23`
+};
+
 const programTypes = [
  "C#",
   "TypeScript",
@@ -21,7 +70,7 @@ const programTypes = [
 
 const Hero = () => {
   const [inputMode, setInputMode] = useState<"text" | "file">("text");
-  const [textInput, setTextInput] = useState("");
+  const [textInput, setTextInput] = useState(languageSnippets["C#"]);
   const [jsonOutput, setJsonOutput] = useState("");
   const [fileName, setFileName] = useState("");
   const [isDragActive, setIsDragActive] = useState(false);
@@ -55,18 +104,15 @@ const Hero = () => {
   reader.onload = async () => {
     const fileContent = reader.result as string;
     setTextInput(fileContent); 
-
-    try {
-      setLoading(true);
-    } catch (err) {
-      console.error(err);
-      console.log("Conversion failed.");
-    } finally {
-      setLoading(false);
-    }
   };
   reader.readAsText(file);
 }, []);
+
+const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedLanguage = e.target.value;
+    setLanguage(selectedLanguage);
+    setTextInput(languageSnippets[selectedLanguage as keyof typeof languageSnippets]); 
+  };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -137,7 +183,7 @@ const handleConvert = async () => {
 try {
   parsedJson = JSON.parse(result.data);
 } catch {
-  parsedJson = result; // fallback if it’s already JSON
+  parsedJson = result; 
 }
     setJsonOutput(JSON.stringify(parsedJson, null, 2));
 
@@ -172,7 +218,7 @@ try {
         <div className="flex items-center gap-4 border-[#B9B9B9] border-b-2 border-r-0 border-l-0 px-5 py-4">
           <h4 className="text-[#1E1E1E] font-bold">Input file type</h4>
           <select value={language}
-            onChange={(e) => setLanguage(e.target.value)} className="rounded-[8px] border border-[#D0D5DD] p-2 cursor-pointer focus:outline-none w-[30%]">
+            onChange= {handleLanguageChange} className="rounded-[8px] border border-[#D0D5DD] p-2 cursor-pointer focus:outline-none w-[30%]">
             {programTypes.map((type) => (
               <option key={type} value={type}>
                 {type}
