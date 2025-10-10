@@ -10,7 +10,7 @@ const toBase64 = (str: string): string => {
 };
 
 const languageSnippets = {
-  "C#": `{
+  "C#": `public class User{
   public string Name { get; set; }
   public int Age { get; set; }
 
@@ -166,6 +166,7 @@ const handleConvert = async () => {
       isCamelCase: pascalCase,  
       isMinify: !nullable        
     };
+    
     const response = await fetch("https://api.jsonizeit.com/parse", {
       method: "POST",
       headers: {
@@ -179,12 +180,19 @@ const handleConvert = async () => {
     }
 
     const result = await response.json();
+    console.log("API Response:", result);
     let parsedJson;
-try {
-  parsedJson = JSON.parse(result.data);
-} catch {
-  parsedJson = result; 
-}
+  try {
+      if (result.data) {
+        parsedJson = JSON.parse(result.data); // Handle expected data structure
+      } else {
+        throw new Error("No data returned from conversion.");
+      }
+    } catch (error) {
+      console.error("Parsing error:", error);
+      throw new Error("Conversion failed. Invalid JSON format.");
+    }
+
     setJsonOutput(JSON.stringify(parsedJson, null, 2));
 
   } catch (err) {
