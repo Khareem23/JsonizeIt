@@ -9,6 +9,17 @@ const toBase64 = (str: string): string => {
   return btoa(unescape(encodeURIComponent(str)));
 };
 
+// Maps frontend language names to the backend DataType enum values
+const languageDataTypeMap: Record<string, number> = {
+  "C#": 1,
+  "Java": 2,
+  "Python": 3,
+  "Dart": 4,
+  "TypeScript": 5,
+  "XML": 6,
+  "CSV": 7,
+};
+
 const languageSnippets = {
   "C#": `public class User{
   public string Name { get; set; }
@@ -22,12 +33,14 @@ const languageSnippets = {
   "TypeScript": `interface User {
   name: string;
   age: number;
+  isActive: boolean;
+  address?: Address;
 }
 
-const user: User = {
-  name: "Ola",
-  age: 23,
-};`,
+interface Address {
+  street: string;
+  city: string;
+}`,
   "Java": `class User {
   String name;
   int age;
@@ -163,8 +176,9 @@ const handleConvert = async () => {
 
    const payload = {
       dataToConvertInBase64: toBase64(textInput),
-      isCamelCase: pascalCase,  
-      isMinify: !nullable        
+      isCamelCase: pascalCase,
+      isMinify: !nullable,
+      dataType: languageDataTypeMap[language] ?? 1,
     };
     
     const response = await fetch("https://api.jsonizeit.com/parse", {

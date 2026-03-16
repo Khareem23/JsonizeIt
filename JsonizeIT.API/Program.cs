@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddScoped<IJsonConverter, CSharpParser2>();
+builder.Services.AddSingleton<JsonConverterFactory>();
 
 // CORS 
 builder.Services.AddCors(options =>
@@ -36,13 +36,14 @@ app.UseSwaggerUI(c =>
 
 
 // POST endpoint
-app.MapPost("/parse", (ParseRequest request, IJsonConverter parser) =>
+app.MapPost("/parse", (ParseRequest request, JsonConverterFactory factory) =>
 {
     try
     {
         var bytes = Convert.FromBase64String(request.DataToConvertInBase64);
         var decoded = System.Text.Encoding.UTF8.GetString(bytes);
-    
+
+        var parser = factory.GetConverter(request.DataType);
         var result = parser.Parse(decoded, request.IsCamelCase, request.IsMinify);
 
         // Automatically returns JSON

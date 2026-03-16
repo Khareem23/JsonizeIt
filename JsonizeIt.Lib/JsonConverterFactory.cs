@@ -9,6 +9,8 @@ public class JsonConverterFactory
         {
             case DataType.CSharp:
                 return new CSharpClassParser();
+            case DataType.TypeScript:
+                return new TypeScriptParser();
             case DataType.Java:
                 throw new NotImplementedException();
             default:
